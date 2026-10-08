@@ -1,6 +1,6 @@
 // Golden Vision — service worker: guarda a interface no aparelho para abrir rápido e sem internet.
 // Os dados NÃO passam por aqui: eles vão direto para a planilha (servidor Google).
-const VERSAO = 'gv-v1';
+const VERSAO = 'gv-v2';
 const BASE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -24,7 +24,7 @@ self.addEventListener('fetch', e => {
     return;
   }
   // o próprio app: tenta a versão mais nova; sem internet, abre a guardada
-  e.respondWith(fetch(req).then(res => {
+  e.respondWith(fetch(req, { cache: 'no-cache' }).then(res => {
     if (res.ok) { const cp = res.clone(); caches.open(VERSAO).then(c => c.put(req, cp)); }
     return res;
   }).catch(() => caches.match(req).then(r => r || caches.match('./index.html'))));
